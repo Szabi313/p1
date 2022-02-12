@@ -16,7 +16,7 @@ class Credentials:
 			return false
 		
 	def getAccountNo(self):
-		print(self.credentials)
+	#	print(self.credentials)
 		if self.credentials['accountNo']:
 			return self.credentials['accountNo']
 		else:
