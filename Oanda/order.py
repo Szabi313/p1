@@ -8,6 +8,7 @@ from oanda.oaResponse import oaResponse
 from api.oanda import oaRequest, endPoints
 import sys
 from slope import Slope
+import requests
 
 request = oaRequest()
 
@@ -29,40 +30,24 @@ instNS = parser.parse_args()
 if instNS.instrument:
 	print(instNS.instrument)
 	
-#newOrder = request.makeOrder('EUR_HUF')
+#newOrder = request.makeOrder('EUR_HUF', buy = False)
 
-#newOrder = request.post(
-#{
-#	endPoints.orders: ''
-#},
-#data = json.dumps({
-#				"order": {
-#					"units": "1",
-#					"instrument": "EUR_HUF",
-#					"timeInForce": "FOK",
-#					"type": "MARKET",
-#					"positionFill": "DEFAULT"
-#				}
-#			}),
-#)
-
-#newOrder = newOrder.json()
 #print('\nORDER:\n')
 #print(newOrder)
 #print('\n\n')
 
-#trades = request.get(
-#	{
-#		endPoints.trades: ''
-#	}, instrument=instNS.instrument)
+close = request.closePosition('840', 1)
+#print('close: ')
+#print(close)
+
 
 trades = request.getTrades(instNS.instrument)
-trades = trades.json()
-	
-for trade in trades['trades']:
-	print(trade)
-	print('')
+#trades = trades.json()
 
+if 'trades' in trades:
+	for trade in trades['trades']:
+		print(trade)
+		print('')
 
 instruments = request.get(
 	{
@@ -74,64 +59,37 @@ instruments = request.get(
 	#True,
 	count = 300,
 	#price = 'BMA',
-	price = 'B',
+	price = 'BA',
 	#since = '2020-08-09',
 	granularity = 'D'
 )
 
-res = oaResponse()
-df2 = res.instrumentResMapToDf(instruments)
+#print(instruments)
 
-#instruments = instruments.json()
+if 'instrument' in instruments:
+	res = oaResponse()
+	df2 = res.instrumentResMapToDf(instruments)
 
-#print(instruments['candles'])
+	df2['one_day'] = df2['o'].shift(-1)
 
-#close = request.closePosition('417', '1')
-#close = close.json()
-#print('close: ')
-#print(close)
+	sma = Sma(df2)
 
-#request.put(
-#	{
-#		endPoints.trades: '408',
-#		endPoints.close: ''
-#	},
-#	data = json.dumps({ 'units': '1'})
-#)
+	df2 = sma.getSma(200, 'c')
+	df2 = sma.getSma(50, 'c')
+	df2 = sma.getSma(20, 'c')
 
+	slope = Slope(df2)
 
+	df2 = slope.addSlopes('sma_200_c', 5, 'slope_200')
+	df2 = slope.addSlopes('sma_50_c', 5, 'slope_50')
+	df2 = slope.addSlopes('sma_20_c', 5, 'slope_20')
 
-#ask = [item['bid'] for item in instruments['candles']]
-
-#df = pd.DataFrame(instruments['candles'])
-
-#df2 = pd.DataFrame(ask)
-
-#df2 = df2.apply(pd.to_numeric)
-#df2['time'] = pd.to_datetime(df['time'])
-#df2['volume'] = df['volume']
-
-#ask = pd.Series(ask])
-df2['one_day'] = df2['o'].shift(-1)
-
-sma = Sma(df2)
-
-df2 = sma.getSma(200, 'c')
-df2 = sma.getSma(50, 'c')
-df2 = sma.getSma(20, 'c')
-
-slope = Slope(df2)
-
-df2 = slope.addSlopes('sma_200_c', 5, 'slope_200')
-df2 = slope.addSlopes('sma_50_c', 5, 'slope_50')
-df2 = slope.addSlopes('sma_20_c', 5, 'slope_20')
-
-df2 = slope.addSlopes('c', 10, 'priceSlope', startFromFirst = True)
+	df2 = slope.addSlopes('c', 10, 'priceSlope', startFromFirst = True)
 
 #print(df2.iloc[-50:, [0, 5, 6, 7, 9]])
-print(df2.columns)
+	print(df2.columns)
 #print(df2.index)
-print(df2.loc['250':, ['time', 'h', 'l', 'c', 'o', 'slope_200', 'slope_50', 'slope_20', 'priceSlope','priceSlope_r']])
+	print(df2.loc['250':, ['time', 'h', 'l', 'c', 'o', 'slope_200', 'slope_50', 'slope_20', 'priceSlope','priceSlope_r']])
 
 #period = 200
 #source_col = 'c'
@@ -171,9 +129,12 @@ print(df2.loc['250':, ['time', 'h', 'l', 'c', 'o', 'slope_200', 'slope_50', 'slo
 
 #stream = request.getPriceStream(instNS.instrument)
 
-#for line in stream.iter_lines():
-#			lineP = json.loads(line)
-#			print(json.dumps(lineP, indent = 4))
+#print(stream)
+
+#if type(stream) is requests.Response:
+#	for line in stream.iter_lines():
+#				lineP = json.loads(line)
+#				print(json.dumps(lineP, indent = 4))
 
 
 
@@ -186,7 +147,7 @@ transactions = request.get(
 #from = 201, 
 id = 200)
 
-transactions = transactions.json()
+#transactions = transactions.json()
 #print(transactions['transactions'][0])
 
 #print(oanda.endPoints.trades)

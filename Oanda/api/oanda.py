@@ -28,7 +28,7 @@ urlUtil = Bunch(
 
 class oaRequest(ApiInterface):
 	credentials = Credentials()
-	response = ''
+	response = {}
 	order = ''
 	stream = ''
 	
@@ -48,47 +48,91 @@ class oaRequest(ApiInterface):
 			for key, value in pathParams.items():
 				pathParamString += key + urlUtil.SLASH
 				if value != '':
-					pathParamString += value + urlUtil.SLASH
+					pathParamString += str(value) + urlUtil.SLASH
 			pathParamString = pathParamString[:-1]
 			url += pathParamString
 			return url
 	
-	def get(self, pathParams, needAccountNo = True, stream = False, **queryParams):
+	def get(self, pathParams, needAccountNo = True, stream = False, jsonResponse = True, **queryParams):
 			url = self.buildUrl(pathParams, needAccountNo, stream)
-			print(url)
-			self.response = requests.get(
+			#print(url)
+			
+			try:
+				self.response = requests.get(
+					url,
+					headers = self.credentials.getToken(),
+					params = queryParams,
+					stream = stream
+				)
+				#print(self.response.status_code)
+				statusCode = self.response.status_code
+			except:
+				print('CONNECTION ERROR')
+				
+			if jsonResponse:
+				try:
+					self.response = self.response.json()
+					if statusCode != 200:
+						print(statusCode)
+						print(self.response['errorMessage'])
+				except: 
+					print('NO JSON')
+			return self.response
+			
+	def post(self, pathParams, data = '', needAccountNo = True, stream = False, jsonResponse = True, **queryParams):
+		header = self.credentials.getToken()
+		header['Content-Type'] = 'application/json'
+		url = self.buildUrl(pathParams, needAccountNo, stream)
+		
+		try:
+			self.response = requests.post(
 				url,
-				headers = self.credentials.getToken(),
+				data = data,
+				headers = header,
 				params = queryParams,
 				stream = stream
 			)
-			return self.response
+			statusCode = self.response.status_code
+		except:
+			print('CONNECTION ERROR')
 			
-	def post(self, pathParams, data = '', needAccountNo = True, stream = False, **queryParams):
-		header = self.credentials.getToken()
-		header['Content-Type'] = 'application/json'
-		url = self.buildUrl(pathParams, needAccountNo, stream)
-		self.response = requests.post(
-			url,
-			data = data,
-			headers = header,
-			params = queryParams,
-			stream = stream
-		)
+		if jsonResponse:
+			try:
+				self.response = self.response.json()
+				if statusCode != 200:
+					print(statusCode)
+					print(self.response['errorMessage'])
+			except:
+				print('NO JSON')
 		return self.response
 				
 	
-	def put(self, pathParams, data = '', needAccountNo = True, stream = False, **queryParams):
+	def put(self, pathParams, data = '', needAccountNo = True, stream = False, jsonResponse = True, **queryParams):
 		header = self.credentials.getToken()
 		header['Content-Type'] = 'application/json'
 		url = self.buildUrl(pathParams, needAccountNo, stream)
-		self.response = requests.put(
-			url,
-			data = data,
-			headers = header,
-			params = queryParams,
-			stream = stream
-		)
+		statusCode = 0
+		
+		try:
+			self.response = requests.put(
+				url,
+				data = data,
+				headers = header,
+				params = queryParams,
+				stream = stream
+			)
+			statusCode = self.response.status_code
+		except:
+			print('NO CONNECTION')
+			
+		if jsonResponse:
+			try:
+				self.response = self.response.json()
+				if statusCode != 200:
+					print(statusCode)
+					print(self.response['errorMessage'])
+			except:
+				print('NO JSON')
 		return self.response	
 		
 		
@@ -96,22 +140,31 @@ class oaRequest(ApiInterface):
 	# TRADE RELATED FUNCTIONS
 	#	
 	
+	#def getTrades(self, instrument):
+#		self.trades = requests.get(
+#			'https://api-fxpractice.oanda.com/v3/accounts/' + self.credentials.getAccountNo() + '/trades?instrument=' + instrument,
+#			headers = self.credentials.getToken()
+#		)
+#		return self.trades
+		
+		
 	def getTrades(self, instrument):
-		self.trades = requests.get(
-			'https://api-fxpractice.oanda.com/v3/accounts/' + self.credentials.getAccountNo() + '/trades?instrument=' + instrument,
-			headers = self.credentials.getToken()
-		)
-		return self.trades	
+		self.trades = self.get({
+			endPoints.trades: ''
+		})
+		return self.trades
 		
 				
-	def makeOrder(self, instrument):
+	def makeOrder(self, instrument, units = 1, buy = True):
+		if buy == False:
+			units = units * -1
 		self.order = self.post(
 		{
 			endPoints.orders: ''
 		},
 		data = json.dumps({
 						"order": {
-							"units": "1",
+							"units": units,
 							"instrument": "EUR_HUF",
 							"timeInForce": "FOK",
 							"type": "MARKET",
@@ -129,7 +182,8 @@ class oaRequest(ApiInterface):
 				endPoints.stream: ''
 			},
 			instruments = currency,
-			stream = True
+			stream = True,
+			jsonResponse = False
 		)	
 		return stream
 		
@@ -140,7 +194,7 @@ class oaRequest(ApiInterface):
 			endPoints.trades: positionId,
 			endPoints.close: ''
 		},
-		data = json.dumps({ 'units': volume})
+		data = json.dumps({ 'units': str(volume)})
 		)
 		return close
 
