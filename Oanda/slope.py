@@ -69,19 +69,19 @@ class Slope:
 		
 		return self.df
 		
-	def getRegression(self, yp, xp = None):
-		former_xp = None
-		
-		if xp == None:
-			xp = range(0, len(yp))
-			former_xp = True
-		
-		stat = stats.linregress(xp, yp.astype(float))
-		
-		if former_xp == True:
-			return stat.slope
-			
-		return stat
+	#def getRegression(self, yp, xp = None):
+#		former_xp = None
+#		
+#		if xp == None:
+#			xp = range(0, len(yp))
+#			former_xp = True
+#		
+#		stat = stats.linregress(xp, yp.astype(float))
+#		
+#		if former_xp == True:
+#			return stat.slope
+#			
+#		return stat
 		
 #y = [5, 10, 15, 20, 25, 31, 37, 43, 49, 55]
 
