@@ -1,0 +1,5 @@
+__pycache__/
+api/__pycache__/
+oanda/__pycache__/
+deepl/__pycache__/
+Strategies/__pycache__/

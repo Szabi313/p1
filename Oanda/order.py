@@ -1,14 +1,17 @@
-import json
+print('program start')
+
+#import json
 import argparse
-import pandas as pd
+#import pandas as pd
 #from oanda.oaRequest import oaRequest, endPoints
-from sma import Sma
+#from sma import Sma
 from oanda.oaResponse import oaResponse
 #from api.api import ApiInterface
 from api.oanda import oaRequest, endPoints
 import sys
-from slope import Slope
-import requests
+#from slope import Slope
+#import requests
+from deepl.trainingData import TrainingData
 
 request = oaRequest()
 
@@ -36,7 +39,7 @@ if instNS.instrument:
 #print(newOrder)
 #print('\n\n')
 
-close = request.closePosition('840', 1)
+#close = request.closePosition('840', 1)
 #print('close: ')
 #print(close)
 
@@ -69,27 +72,31 @@ instruments = request.get(
 if 'instrument' in instruments:
 	res = oaResponse()
 	df2 = res.instrumentResMapToDf(instruments)
+	
+	training_data = TrainingData()
+	
+	df2 = training_data.makeTrainingData(df2)
 
-	df2['one_day'] = df2['o'].shift(-1)
+#	#df2['one_day'] = df2['o'].shift(-1)
 
-	sma = Sma(df2)
+#	sma = Sma(df2)
 
-	df2 = sma.getSma(200, 'c')
-	df2 = sma.getSma(50, 'c')
-	df2 = sma.getSma(20, 'c')
+#	df2 = sma.getSma(200, 'c')
+#	df2 = sma.getSma(50, 'c')
+#	df2 = sma.getSma(20, 'c')
 
-	slope = Slope(df2)
+#	slope = Slope(df2)
 
-	df2 = slope.addSlopes('sma_200_c', 5, 'slope_200')
-	df2 = slope.addSlopes('sma_50_c', 5, 'slope_50')
-	df2 = slope.addSlopes('sma_20_c', 5, 'slope_20')
+#	df2 = slope.addSlopes('sma_200_c', 5, 'slope_200')
+#	df2 = slope.addSlopes('sma_50_c', 5, 'slope_50')
+#	df2 = slope.addSlopes('sma_20_c', 5, 'slope_20')
 
-	df2 = slope.addSlopes('c', 10, 'priceSlope', startFromFirst = True)
+#	df2 = slope.addSlopes('c', 10, 'priceSlope', startFromFirst = True)
 
 #print(df2.iloc[-50:, [0, 5, 6, 7, 9]])
 	print(df2.columns)
 #print(df2.index)
-	print(df2.loc['250':, ['time', 'h', 'l', 'c', 'o', 'slope_200', 'slope_50', 'slope_20', 'priceSlope','priceSlope_r']])
+	print(df2.loc['250':, ['year_float', 'bid.h', 'bid.l', 'bid_c', 'bid.o',  'slope_200_roll_ols', 'priceSlope_roll_ols']])
 
 #period = 200
 #source_col = 'c'
