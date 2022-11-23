@@ -8,7 +8,7 @@ import argparse
 from oanda.oaResponse import oaResponse
 #from api.api import ApiInterface
 from api.oanda import oaRequest, endPoints
-import sys
+#import sys
 #from slope import Slope
 #import requests
 from deepl.trainingData import TrainingData
@@ -28,7 +28,10 @@ parser.add_argument(
 	help = 'The name of the instrument position of which to be taken'
 )
 
+print('start parse args')
 instNS = parser.parse_args()
+
+print('end parse args')
 
 if instNS.instrument:
 	print(instNS.instrument)
@@ -96,7 +99,7 @@ if 'instrument' in instruments:
 #print(df2.iloc[-50:, [0, 5, 6, 7, 9]])
 	print(df2.columns)
 #print(df2.index)
-	print(df2.loc['250':, ['year_float', 'bid.h', 'bid.l', 'bid_c', 'bid.o',  'slope_200_roll_ols', 'priceSlope_roll_ols']])
+	print(df2.loc [130  : 180, ['time', 'year_float', 'year_float_T+1', 'bid_c', 'sma_20_bid_c', 'sma_20_bid_c_curve_slope',  'priceSlope_l_90_roll_ols', 'priceSlope_l_90_roll_ols_r' ]])
 
 #period = 200
 #source_col = 'c'

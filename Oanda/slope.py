@@ -9,7 +9,9 @@ class Slope:
 		self.df = data_frame
 		self.statistics = None
 		
-	def addSlopes(self, column, period, new_col_name, startFromFirst = False):
+		self.curve_slope = '_curve_slope'
+		
+	def addTrendSlopes(self, column, period, new_col_name, startFromFirst = False):
 
 		print('add slope begin')
 		
@@ -44,7 +46,8 @@ class Slope:
 		
 		model = RollingOLS.from_formula('year_float  ~ ' + column, data = self.df, window=period, eval_env=-1)
 		
-		reg = model.fit(params_only=True)
+		reg = model.fit()
+#		print(reg.rsquared)
 		
 	#	params = reg.params.copy()
 	#	bid_cc = params['bid_c']
@@ -52,6 +55,7 @@ class Slope:
 	#	bid_cc = reg.params.loc[ :,['bid_c']]
 		
 		self.df[new_col_name + '_roll_ols'] = reg.params.loc[ : , [column]]
+		self.df[new_col_name + '_roll_ols_r'] = reg.rsquared
 	#	print(bid_cc)
 		
 	#	self.df.join([coef])
@@ -63,11 +67,27 @@ class Slope:
 #		self.df[new_col_name + '_roll_shift'] = self.df.shift(-2)[new_col_name + '_roll']
 		
 		if startFromFirst:
-			self.df.shift(-1 * period)[new_col_name + '_roll_ols']
+				self.df[new_col_name + '_roll_ols'] =  	self.df[new_col_name + '_roll_ols'].shift(-1 * period)
+				self.df[new_col_name + '_roll_ols_r'] =  	self.df[new_col_name + '_roll_ols_r'].shift(-1 * period)
 		
 		print('add slope end')
 		
 		return self.df
+		
+		
+	def addCurveSlopes(self, time_column, time_column_t_1,  column, new_col_name):
+		self.df[column + self.curve_slope] = self.df[column].shift(-1)
+		self.df[column + self.curve_slope] = (self.df[time_column_t_1] - self.df[time_column])  / (self.df[column + self.curve_slope] - self.df[column])
+	#	self.df.rename(columns = {column + '_T+1': column + '_curve_slope'})
+		return self.df
+		
+		
+	def curveSlope(self, y):
+		# step by one so delta x always 1.
+		# calculatng the slope between the first two item of y, 
+		# so rolling window must be 2 (higher length not affected)
+		
+		return 1 /( y[1] - y[0])
 		
 	#def getRegression(self, yp, xp = None):
 #		former_xp = None

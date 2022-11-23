@@ -13,14 +13,14 @@ class Credentials:
 		if self.credentials['token']:
 			return self.credentials['token']
 		else:
-			return false
+			return False
 		
 	def getAccountNo(self):
 	#	print(self.credentials)
 		if self.credentials['accountNo']:
 			return self.credentials['accountNo']
 		else:
-			return false
+			return False
 		
 	def setToken(self, token):
 		self.token = token
