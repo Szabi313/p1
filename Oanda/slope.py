@@ -1,4 +1,4 @@
-from scipy import stats
+#from scipy import stats
 import pandas as pd
 import numpy as np
 import statsmodels as sm

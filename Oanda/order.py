@@ -99,7 +99,9 @@ if 'instrument' in instruments:
 #print(df2.iloc[-50:, [0, 5, 6, 7, 9]])
 	print(df2.columns)
 #print(df2.index)
-	print(df2.loc [130  : 180, ['time', 'year_float', 'year_float_T+1', 'bid_c', 'sma_20_bid_c', 'sma_20_bid_c_curve_slope',  'priceSlope_l_90_roll_ols', 'priceSlope_l_90_roll_ols_r' ]])
+#	print(df2.loc [130  : 180, ['time', 'volume', 'year_float', 'year_float_T+1', 'bid_c', 'sma_20_bid_c', 'sma_20_bid_c_curve_slope',  'priceSlope_l_90_roll_ols', 'priceSlope_l_90_roll_ols_r' ]])
+
+	print(df2.loc [250  : , ['time', 'volume', 'year_float', 'ask_h', 'sma_200_bid_c', 'sma_50_bid_c', 'sma_200_per_50', 'sma_200_per_ask_h']])
 
 #period = 200
 #source_col = 'c'
