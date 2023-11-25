@@ -57,8 +57,8 @@ if 'trades' in trades:
 
 instruments = request.get(
 	{
-		endPoints.instruments: instNS.instrument,
-		endPoints.candles: ''
+		endPoints['instruments']: instNS.instrument,
+		endPoints['candles']: ''
 	},
 	#instruments = instNS.instrument,
 	#'candles': ''
@@ -153,8 +153,8 @@ if 'instrument' in instruments:
 
 transactions = request.get(
 {
-	endPoints.transactions: '',
-	endPoints.sinceid: ''
+	endPoints['transactions']: '',
+	endPoints['sinceid']: ''
 }, 
 #from = 201, 
 id = 200)

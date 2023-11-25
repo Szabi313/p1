@@ -3,6 +3,13 @@ from slope import Slope
 from oanda.oaResponse import oaResponse
 from itertools import combinations
 
+# based on real experience
+DEFAULT_STEEP_AND_R_VALUE = {
+	10: (0.005, 0.7),
+	20: (0.015, 0.8),
+	30: (0.015, 0.7)
+}
+
 class TrainingData:
 	BID_L = 'bid_l'
 	ASK_H = 'ask_h'
@@ -42,7 +49,7 @@ class TrainingData:
 		#self.training_data = slope.addTrendSlopes(column, 30, 'priceSlope', startFromFirst = True)
 		
 		for i in trend_periods:
+			self.training_data = slope.addTrendSlopes('ask_l', i, 'priceSlope_l_' + str(i), startFromFirst = True)
 			self.training_data = slope.addTrendSlopes('bid_h', i, 'priceSlope_h_' + str(i), startFromFirst = True)
-			self.training_data = slope.addTrendSlopes('bid_l', i, 'priceSlope_l_' + str(i), startFromFirst = True)
 			
 		return self.training_data

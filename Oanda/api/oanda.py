@@ -1,30 +1,30 @@
 import requests
-from bunch import Bunch
+# from bunch import Bunch
 from api.vendors.Credentials.credentials import Credentials
 import json
 from api.api import ApiInterface
 
-endPoints = Bunch(
-	trades = 'trades',
-	orders = 'orders',
-	pricing = 'pricing',
-	instruments = 'instruments',
-	candles = 'candles',
-	stream = 'stream',
-	close = 'close',
-	transactions = 'transactions',
-	idrange = 'idrange',
-	sinceid = 'sinceid'
-)
+endPoints = {
+	'trades': 'trades',
+	'orders': 'orders',
+	'pricing': 'pricing',
+	'instruments': 'instruments',
+	'candles': 'candles',
+	'stream': 'stream',
+	'close': 'close',
+	'transactions': 'transactions',
+	'idrange': 'idrange',
+	'sinceid': 'sinceid'
+}
 
 	
-urlUtil = Bunch(
-	SLASH = '/',
-	HTTPS = 'https://',
-	BASE_URL = 'api-fxpractice.oanda.com/v3/',
-	BASE_STREAM_URL = 'stream-fxpractice.oanda.com/v3/',
-	ACCOUNTS = 'accounts/'
-)
+urlUtil = {
+	'SLASH': '/',
+	'HTTPS': 'https://',
+	'BASE_URL': 'api-fxpractice.oanda.com/v3/',
+	'BASE_STREAM_URL': 'stream-fxpractice.oanda.com/v3/',
+	'ACCOUNTS': 'accounts/'
+}
 
 class oaRequest(ApiInterface):
 	credentials = Credentials()
@@ -34,21 +34,21 @@ class oaRequest(ApiInterface):
 	
 	def buildUrl(self, pathParams, needAccountNo, stream):
 		if stream:
-			baseUrl = urlUtil.BASE_STREAM_URL
+			baseUrl = urlUtil['BASE_STREAM_URL']
 		else:
-			baseUrl = urlUtil.BASE_URL
-		url = urlUtil.HTTPS + baseUrl 
+			baseUrl = urlUtil['BASE_URL']
+		url = urlUtil['HTTPS'] + baseUrl 
 		if needAccountNo:
-			url += urlUtil.ACCOUNTS + self.credentials.getAccountNo()
-		url += urlUtil.SLASH 		
+			url += urlUtil['ACCOUNTS'] + self.credentials.getAccountNo()
+		url += urlUtil['SLASH']		
 		if type(pathParams) is str:
 			url += endPoints[pathParams]
 		elif type(pathParams) is dict:
 			pathParamString = ''
 			for key, value in pathParams.items():
-				pathParamString += key + urlUtil.SLASH
+				pathParamString += key + urlUtil['SLASH']
 				if value != '':
-					pathParamString += str(value) + urlUtil.SLASH
+					pathParamString += str(value) + urlUtil['SLASH']
 			pathParamString = pathParamString[:-1]
 			url += pathParamString
 			return url
@@ -150,7 +150,7 @@ class oaRequest(ApiInterface):
 		
 	def getTrades(self, instrument):
 		self.trades = self.get({
-			endPoints.trades: ''
+			endPoints['trades']: ''
 		})
 		return self.trades
 		
@@ -160,7 +160,7 @@ class oaRequest(ApiInterface):
 			units = units * -1
 		self.order = self.post(
 		{
-			endPoints.orders: ''
+			endPoints['orders']: ''
 		},
 		data = json.dumps({
 						"order": {
@@ -178,8 +178,8 @@ class oaRequest(ApiInterface):
 	def getPriceStream(self, currency):	
 		stream = self.get(
 			{
-				endPoints.pricing: '',
-				endPoints.stream: ''
+				endPoints['pricing']: '',
+				endPoints['stream']: ''
 			},
 			instruments = currency,
 			stream = True,
@@ -191,8 +191,8 @@ class oaRequest(ApiInterface):
 	def closePosition(self, positionId, volume):
 		close = self.put(
 		{
-			endPoints.trades: positionId,
-			endPoints.close: ''
+			endPoints['trades']: positionId,
+			endPoints['close']: ''
 		},
 		data = json.dumps({ 'units': str(volume)})
 		)
