@@ -1,6 +1,6 @@
 print('program start')
 
-#import json
+import json
 import argparse
 #import pandas as pd
 #from oanda.oaRequest import oaRequest, endPoints
@@ -10,7 +10,7 @@ from oanda.oaResponse import oaResponse
 from api.oanda import oaRequest, endPoints
 #import sys
 #from slope import Slope
-#import requests
+import requests
 from deepl.trainingData import TrainingData
 
 request = oaRequest()
@@ -70,7 +70,7 @@ instruments = request.get(
 	granularity = 'D'
 )
 
-#print(instruments)
+print(instruments)
 
 if 'instrument' in instruments:
 	res = oaResponse()

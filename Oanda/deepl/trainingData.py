@@ -48,8 +48,11 @@ class TrainingData:
 		#self.training_data = slope.addSlopes(column, 30, 'priceSlope', startFromFirst = True)
 		#self.training_data = slope.addTrendSlopes(column, 30, 'priceSlope', startFromFirst = True)
 		
+# Bid Low is the lowest price at which a transaction has been or could have  been completed
+# and also Ask High is the highest price at which a transaction has been or could have  been completed
+		
 		for i in trend_periods:
-			self.training_data = slope.addTrendSlopes('ask_l', i, 'priceSlope_l_' + str(i), startFromFirst = True)
-			self.training_data = slope.addTrendSlopes('bid_h', i, 'priceSlope_h_' + str(i), startFromFirst = True)
+			self.training_data = slope.addTrendSlopes('ask_h', i, 'priceSlope_h_' + str(i), startFromFirst = True)
+			self.training_data = slope.addTrendSlopes('bid_l', i, 'priceSlope_l_' + str(i), startFromFirst = True)
 			
 		return self.training_data
