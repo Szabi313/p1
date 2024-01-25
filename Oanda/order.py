@@ -63,14 +63,14 @@ instruments = request.get(
 	#instruments = instNS.instrument,
 	#'candles': ''
 	#True,
-	count = 300,
+	count = 1000,
 	#price = 'BMA',
 	price = 'BA',
 	#since = '2020-08-09',
 	granularity = 'D'
 )
 
-print(instruments)
+# print(instruments)
 
 if 'instrument' in instruments:
 	res = oaResponse()
@@ -101,7 +101,7 @@ if 'instrument' in instruments:
 #print(df2.index)
 #	print(df2.loc [130  : 180, ['time', 'volume', 'year_float', 'year_float_T+1', 'bid_c', 'sma_20_bid_c', 'sma_20_bid_c_curve_slope',  'priceSlope_l_90_roll_ols', 'priceSlope_l_90_roll_ols_r' ]])
 
-	print(df2.loc [250  : , ['time', 'volume', 'year_float', 'ask_h', 'sma_200_bid_c', 'sma_50_bid_c', 'sma_200_per_50', 'sma_200_per_ask_h']])
+	print(df2.loc [200  : 250 , [ 'bid_l_priceSlope_30_roll_ols', 'bid_l_priceSlope_30_roll_ols_r', 'bid_l_label_30', 'ask_h_priceSlope_30_roll_ols', 'ask_h_priceSlope_30_roll_ols_r', 'ask_h_label_30']])
 
 #period = 200
 #source_col = 'c'
